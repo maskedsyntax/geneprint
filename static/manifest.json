@@ -4,8 +4,8 @@
   "description": "Deterministic DNA Signature Generator powered by Rust WASM and Three.js",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#020617",
+  "background_color": "#0a0b0e",
+  "theme_color": "#0a0b0e",
   "icons": [
     {
       "src": "/favicon.png",

@@ -77,11 +77,13 @@
 				Geneprint
 			</h1>
 		</div>
-		<div class="flex items-center space-x-6 text-[10px] font-bold uppercase tracking-[0.1em] text-zinc-600">
-			<span>Station: 01</span>
-			<div class="flex items-center space-x-1.5">
-				<div class="w-1.5 h-1.5 rounded-full bg-zinc-700 animate-pulse"></div>
-				<span>Processing</span>
+		<div class="flex items-center space-x-8 text-[12px] font-bold uppercase tracking-[0.15em] text-zinc-500">
+			<div class="flex flex-col items-end leading-none space-y-1.5">
+				<span>Station: 01</span>
+				<div class="flex items-center space-x-2 text-zinc-400">
+					<div class="w-2 h-2 rounded-full bg-zinc-600 animate-pulse"></div>
+					<span class="text-xs">Processing</span>
+				</div>
 			</div>
 		</div>
 	</header>
@@ -190,7 +192,7 @@
 			{:else}
 				<div class="absolute inset-0 flex items-center justify-center opacity-[0.03] select-none">
 					<div class="text-center space-y-6">
-						<div class="text-[12rem] font-black text-zinc-100 tracking-[0.2em]">PROTO</div>
+						<div class="text-[10rem] font-black text-zinc-100 tracking-[0.2em] uppercase">Geneprint</div>
 						<p class="text-zinc-100 text-[10px] font-bold uppercase tracking-[1.5em]">System Scanning</p>
 					</div>
 				</div>

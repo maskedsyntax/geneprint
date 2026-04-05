@@ -29,6 +29,6 @@ The core of GenePrint is a mathematical derivation engine that ensures identical
 4. Export Your Signature: Use the "Export" button to save a high-resolution image of your unique genetic fingerprint.
 
 ---
-<div align="center">
-*Mathematically derived, 100% Client-side, Molecular Derivation Protocol v1.2*
-</div>
+<p align="center">
+  <i>Mathematically derived, 100% Client-side, Molecular Derivation Protocol v1.2</i>
+</p>
