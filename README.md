@@ -1,8 +1,8 @@
 <div align="center">
 
-# GenePrint - DNA Signature Generator
-
 <img src="static/logo.png" width="200" alt="GenePrint Logo" />
+
+# GenePrint - DNA Signature Generator
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Svelte](https://img.shields.io/badge/Svelte-5-ff3e00.svg)](https://svelte.dev)

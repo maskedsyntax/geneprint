@@ -70,8 +70,8 @@
 
 	<header class="relative z-10 px-10 py-6 flex justify-between items-center border-b border-zinc-800/40 bg-[#0a0b0e]/80 backdrop-blur-md">
 		<div class="flex items-center space-x-5">
-			<div class="w-10 h-10 flex items-center justify-center">
-				<img src="/logo.png" alt="GenePrint Logo" class="w-full h-full object-contain" />
+			<div class="w-16 h-16 flex items-center justify-center">
+				<img src="/logo.png" alt="GenePrint Logo" class="w-full h-full object-contain scale-125" />
 			</div>
 			<h1 class="text-sm font-bold tracking-[0.2em] text-zinc-100 uppercase">
 				Geneprint
