@@ -6,6 +6,7 @@
 	let identifier = $state('');
 	let dnaSequence = $state<{ sequence: string; length: number } | null>(null);
 	let wasmLoaded = $state(false);
+	let canvasComponent: ReturnType<typeof HelixCanvas> | null = $state(null);
 
 	onMount(async () => {
 		try {
@@ -27,9 +28,33 @@
 			dnaSequence = null;
 		}
 	});
+
+	function exportImage() {
+		if (canvasComponent) {
+			const dataUrl = canvasComponent.capture();
+			if (dataUrl) {
+				const link = document.createElement('a');
+				link.download = `geneprint-${identifier || 'sequence'}.png`;
+				link.href = dataUrl;
+				link.click();
+			}
+		}
+	}
 </script>
 
 <div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col overflow-hidden">
+	{#if !wasmLoaded}
+		<div class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center space-y-6">
+			<div class="w-16 h-16 border-4 border-slate-800 border-t-blue-500 rounded-full animate-spin"></div>
+			<div class="text-center space-y-2">
+				<h1 class="text-2xl font-black tracking-tighter animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+					Initializing GenePrint
+				</h1>
+				<p class="text-xs font-mono text-slate-600 uppercase tracking-widest">Loading Rust WASM Modules</p>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Background Effects -->
 	<div class="fixed inset-0 pointer-events-none opacity-20">
 		<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500 rounded-full blur-[120px]"></div>
@@ -65,12 +90,6 @@
 						placeholder="Username, email, or string..."
 						class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-4 py-4 text-lg focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-slate-700 shadow-inner"
 					/>
-					{#if !wasmLoaded}
-						<div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2">
-							<div class="w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
-							<span class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Initializing WASM</span>
-						</div>
-					{/if}
 				</div>
 			</section>
 
@@ -99,12 +118,18 @@
 						</div>
 					</div>
 
-					<div class="pt-4">
+					<div class="pt-4 grid grid-cols-2 gap-4">
 						<button 
-							class="w-full bg-slate-100 text-slate-950 font-bold py-3 rounded-xl hover:bg-white active:scale-[0.98] transition-all shadow-xl shadow-white/5"
+							class="bg-slate-800 text-slate-200 font-bold py-3 rounded-xl hover:bg-slate-700 active:scale-[0.98] transition-all border border-slate-700"
 							onclick={() => navigator.clipboard.writeText(dnaSequence?.sequence || '')}
 						>
-							Copy Sequence
+							Copy Text
+						</button>
+						<button 
+							class="bg-slate-100 text-slate-950 font-bold py-3 rounded-xl hover:bg-white active:scale-[0.98] transition-all shadow-xl shadow-white/5"
+							onclick={exportImage}
+						>
+							Export PNG
 						</button>
 					</div>
 				</section>
@@ -122,7 +147,7 @@
 		<div class="flex-1 relative bg-slate-950">
 			{#if dnaSequence}
 				<div class="absolute inset-0">
-					<HelixCanvas sequence={dnaSequence.sequence} />
+					<HelixCanvas bind:this={canvasComponent} sequence={dnaSequence.sequence} />
 				</div>
 				<div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur-md border border-slate-800 px-6 py-3 rounded-full flex items-center space-x-6 text-[10px] font-bold uppercase tracking-widest text-slate-400 shadow-2xl">
 					<div class="flex items-center space-x-2">

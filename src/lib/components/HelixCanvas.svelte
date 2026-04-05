@@ -128,6 +128,12 @@
 		}
 	});
 
+	export function capture(): string {
+		if (!renderer || !scene || !camera) return '';
+		renderer.render(scene, camera);
+		return renderer.domElement.toDataURL('image/png');
+	}
+
 	function onWindowResize() {
 		if (!container || !camera || !renderer) return;
 		camera.aspect = container.clientWidth / container.clientHeight;
