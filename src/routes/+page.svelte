@@ -157,20 +157,20 @@
 				</div>
 				<div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur-md border border-slate-800 px-6 py-3 rounded-full flex items-center space-x-6 text-[10px] font-bold uppercase tracking-widest text-slate-400 shadow-2xl">
 					<div class="flex items-center space-x-2">
-						<div class="w-2 h-2 rounded-full bg-[#4ADE80]"></div>
-						<span>Adenine</span>
-					</div>
-					<div class="flex items-center space-x-2">
-						<div class="w-2 h-2 rounded-full bg-[#60A5FA]"></div>
-						<span>Cytosine</span>
-					</div>
-					<div class="flex items-center space-x-2">
 						<div class="w-2 h-2 rounded-full bg-[#FACC15]"></div>
-						<span>Guanine</span>
+						<span>Adenine</span>
 					</div>
 					<div class="flex items-center space-x-2">
 						<div class="w-2 h-2 rounded-full bg-[#F87171]"></div>
 						<span>Thymine</span>
+					</div>
+					<div class="flex items-center space-x-2">
+						<div class="w-2 h-2 rounded-full bg-[#4ADE80]"></div>
+						<span>Guanine</span>
+					</div>
+					<div class="flex items-center space-x-2">
+						<div class="w-2 h-2 rounded-full bg-[#60A5FA]"></div>
+						<span>Cytosine</span>
 					</div>
 				</div>
 			{:else}

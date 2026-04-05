@@ -18,10 +18,17 @@
 	let frameId: number;
 
 	const COLORS: Record<string, number> = {
-		A: 0x4ADE80, // green-400
-		C: 0x60A5FA, // blue-400
-		G: 0xFACC15, // yellow-400
-		T: 0xF87171  // red-400
+		A: 0xFACC15, // Yellow
+		T: 0xF87171, // Red
+		G: 0x4ADE80, // Green
+		C: 0x60A5FA  // Blue
+	};
+
+	const PAIRS: Record<string, string> = {
+		A: 'T',
+		T: 'A',
+		G: 'C',
+		C: 'G'
 	};
 
 	onMount(() => {
@@ -43,26 +50,32 @@
 	function initScene() {
 		scene = new THREE.Scene();
 		
-		camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-		camera.position.z = 15;
-		camera.position.y = 5;
+		camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+		camera.position.z = 25;
+		camera.position.y = 10;
 
 		renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 		renderer.setSize(container.clientWidth, container.clientHeight);
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+		renderer.shadowMap.enabled = true;
 		container.appendChild(renderer.domElement);
 
 		controls = new OrbitControls(camera, renderer.domElement);
 		controls.enableDamping = true;
 		controls.autoRotate = true;
-		controls.autoRotateSpeed = 2;
+		controls.autoRotateSpeed = 1.5;
 
-		const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+		const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
 		scene.add(ambientLight);
 
-		const pointLight = new THREE.PointLight(0xffffff, 1);
-		pointLight.position.set(10, 10, 10);
-		scene.add(pointLight);
+		const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+		dirLight.position.set(10, 20, 10);
+		dirLight.castShadow = true;
+		scene.add(dirLight);
+
+		const spotLight = new THREE.SpotLight(0xffffff, 0.8);
+		spotLight.position.set(-10, -20, -10);
+		scene.add(spotLight);
 
 		helixGroup = new THREE.Group();
 		scene.add(helixGroup);
@@ -71,7 +84,6 @@
 	}
 
 	function createHelix() {
-		// Clear existing helix
 		while(helixGroup.children.length > 0){ 
 			helixGroup.remove(helixGroup.children[0]); 
 		}
@@ -79,54 +91,66 @@
 		if (!sequence) return;
 
 		const numSteps = sequence.length;
-		const radius = 3;
+		const radius = 4;
 		const twist = 0.5;
-		const stepHeight = 0.5;
+		const stepHeight = 0.8;
 
-		const sphereGeom = new THREE.SphereGeometry(0.3, 16, 16);
-		const rungGeom = new THREE.CylinderGeometry(0.1, 0.1, radius * 2);
+		const backboneMaterial = new THREE.MeshPhongMaterial({ 
+			color: 0x2D3748, 
+			shininess: 100,
+			specular: 0x444444
+		});
+
+		const pointsA: THREE.Vector3[] = [];
+		const pointsB: THREE.Vector3[] = [];
 
 		for (let i = 0; i < numSteps; i++) {
 			const angle = i * twist;
 			const y = (i - numSteps / 2) * stepHeight;
 
-			const base = sequence[i];
-			const color = COLORS[base] || 0xffffff;
-			const material = new THREE.MeshPhongMaterial({ 
-				color, 
-				emissive: color, 
-				emissiveIntensity: 0.5,
-				shininess: 100 
-			});
-
-			// Backbone A
 			const xA = Math.cos(angle) * radius;
 			const zA = Math.sin(angle) * radius;
-			const sphereA = new THREE.Mesh(sphereGeom, material);
-			sphereA.position.set(xA, y, zA);
-			helixGroup.add(sphereA);
+			pointsA.push(new THREE.Vector3(xA, y, zA));
 
-			// Backbone B
 			const xB = Math.cos(angle + Math.PI) * radius;
 			const zB = Math.sin(angle + Math.PI) * radius;
-			const sphereB = new THREE.Mesh(sphereGeom, material);
-			sphereB.position.set(xB, y, zB);
-			helixGroup.add(sphereB);
+			pointsB.push(new THREE.Vector3(xB, y, zB));
 
-			// Rung
-			const rung = new THREE.Mesh(rungGeom, material);
-			rung.position.set(0, y, 0);
-			rung.rotation.z = Math.PI / 2;
-			rung.rotation.y = angle;
-			helixGroup.add(rung);
+			// Rungs - Split into two parts
+			const base1 = sequence[i];
+			const base2 = PAIRS[base1] || 'A';
+
+			const rungMaterial1 = new THREE.MeshPhongMaterial({ color: COLORS[base1], shininess: 80 });
+			const rungMaterial2 = new THREE.MeshPhongMaterial({ color: COLORS[base2], shininess: 80 });
+
+			const rungGeom = new THREE.CylinderGeometry(0.2, 0.2, radius);
+			
+			// First half of rung
+			const rung1 = new THREE.Mesh(rungGeom, rungMaterial1);
+			rung1.position.set(Math.cos(angle) * (radius / 2), y, Math.sin(angle) * (radius / 2));
+			rung1.rotation.z = Math.PI / 2;
+			rung1.rotation.y = angle;
+			helixGroup.add(rung1);
+
+			// Second half of rung
+			const rung2 = new THREE.Mesh(rungGeom, rungMaterial2);
+			rung2.position.set(Math.cos(angle + Math.PI) * (radius / 2), y, Math.sin(angle + Math.PI) * (radius / 2));
+			rung2.rotation.z = Math.PI / 2;
+			rung2.rotation.y = angle;
+			helixGroup.add(rung2);
 		}
+
+		// Create smooth backbone ribbons
+		const curveA = new THREE.CatmullRomCurve3(pointsA);
+		const tubeGeomA = new THREE.TubeGeometry(curveA, numSteps * 4, 0.35, 12, false);
+		const meshA = new THREE.Mesh(tubeGeomA, backboneMaterial);
+		helixGroup.add(meshA);
+
+		const curveB = new THREE.CatmullRomCurve3(pointsB);
+		const tubeGeomB = new THREE.TubeGeometry(curveB, numSteps * 4, 0.35, 12, false);
+		const meshB = new THREE.Mesh(tubeGeomB, backboneMaterial);
+		helixGroup.add(meshB);
 	}
-
-	$effect(() => {
-		if (helixGroup && sequence) {
-			createHelix();
-		}
-	});
 
 	export function capture(): string {
 		if (!renderer || !scene || !camera) return '';
@@ -146,6 +170,12 @@
 		if (controls) controls.update();
 		if (renderer && scene && camera) renderer.render(scene, camera);
 	}
+
+	$effect(() => {
+		if (helixGroup && sequence) {
+			createHelix();
+		}
+	});
 </script>
 
 <div bind:this={container} class="w-full h-full min-h-[400px]"></div>
