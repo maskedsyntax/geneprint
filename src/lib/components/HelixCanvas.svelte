@@ -81,6 +81,7 @@
 		scene.add(rimLight);
 
 		helixGroup = new THREE.Group();
+		helixGroup.rotation.z = Math.PI / 2; // Initial horizontal orientation
 		scene.add(helixGroup);
 
 		particleGroup = new THREE.Group();
@@ -226,6 +227,12 @@
 	function animate() {
 		frameId = requestAnimationFrame(animate);
 		
+		if (helixGroup) {
+			// Subtle multi-axis rotation for a more "floating" feel
+			helixGroup.rotation.y += 0.005;
+			helixGroup.rotation.z += 0.001;
+		}
+
 		if (particleGroup) {
 			particleGroup.children.forEach(p => {
 				p.position.add(p.userData.velocity);
