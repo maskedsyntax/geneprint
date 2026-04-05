@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import init, { generate_dna_sequence, get_base_color } from '/wasm/geneprint_wasm.js';
+	import { browser } from '$app/environment';
+	// Use relative import or $lib alias for Vite to bundle correctly
+	import init, { generate_dna_sequence, get_base_color } from '$lib/wasm/geneprint_wasm.js';
 	import HelixCanvas from '$lib/components/HelixCanvas.svelte';
+	import wasmUrl from '$lib/wasm/geneprint_wasm_bg.wasm?url';
 
 	let identifier = $state('');
 	let dnaSequence = $state<{ sequence: string; length: number } | null>(null);
@@ -9,11 +12,14 @@
 	let canvasComponent: ReturnType<typeof HelixCanvas> | null = $state(null);
 
 	onMount(async () => {
-		try {
-			await init();
-			wasmLoaded = true;
-		} catch (e) {
-			console.error('Failed to load WASM:', e);
+		if (browser) {
+			try {
+				// We need to pass the URL of the WASM file explicitly to init if it's managed by Vite
+				await init(wasmUrl);
+				wasmLoaded = true;
+			} catch (e) {
+				console.error('Failed to load WASM:', e);
+			}
 		}
 	});
 
@@ -184,17 +190,3 @@
 		</p>
 	</footer>
 </div>
-
-<style>
-	:global(body) {
-		@apply bg-slate-950 overflow-hidden;
-	}
-
-	.scrollbar-hide::-webkit-scrollbar {
-		display: none;
-	}
-	.scrollbar-hide {
-		-ms-overflow-style: none;
-		scrollbar-width: none;
-	}
-</style>

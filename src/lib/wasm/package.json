@@ -1,0 +1,15 @@
+{
+  "name": "geneprint-wasm",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "geneprint_wasm_bg.wasm",
+    "geneprint_wasm.js",
+    "geneprint_wasm.d.ts"
+  ],
+  "main": "geneprint_wasm.js",
+  "types": "geneprint_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
