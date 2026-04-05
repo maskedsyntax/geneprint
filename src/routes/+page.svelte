@@ -10,6 +10,7 @@
 	let dnaSequence = $state<{ sequence: string; length: number } | null>(null);
 	let wasmLoaded = $state(false);
 	let canvasComponent: ReturnType<typeof HelixCanvas> | null = $state(null);
+	let isPaused = $state(false);
 
 	onMount(async () => {
 		if (browser) {
@@ -153,8 +154,29 @@
 		<div class="flex-1 relative bg-slate-950">
 			{#if dnaSequence}
 				<div class="absolute inset-0">
-					<HelixCanvas bind:this={canvasComponent} sequence={dnaSequence.sequence} />
+					<HelixCanvas bind:this={canvasComponent} sequence={dnaSequence.sequence} paused={isPaused} />
 				</div>
+				
+				<!-- Controls Overlay -->
+				<div class="absolute top-8 right-8 flex flex-col space-y-2">
+					<button 
+						class="bg-slate-900/80 backdrop-blur-md border border-slate-800 p-3 rounded-xl hover:bg-slate-800 transition-all text-slate-300 shadow-xl"
+						onclick={() => isPaused = !isPaused}
+						title={isPaused ? "Play Animation" : "Pause Animation"}
+					>
+						{#if isPaused}
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+								<path d="M8 5v14l11-7z"/>
+							</svg>
+						{:else}
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+								<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+							</svg>
+						{/if}
+					</button>
+				</div>
+
+				<!-- Legend Overlay -->
 				<div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur-md border border-slate-800 px-6 py-3 rounded-full flex items-center space-x-6 text-[10px] font-bold uppercase tracking-widest text-slate-400 shadow-2xl">
 					<div class="flex items-center space-x-2">
 						<div class="w-2 h-2 rounded-full bg-[#FACC15]"></div>

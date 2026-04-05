@@ -5,9 +5,10 @@
 
 	interface Props {
 		sequence: string;
+		paused?: boolean;
 	}
 
-	let { sequence }: Props = $props();
+	let { sequence, paused = false }: Props = $props();
 
 	let container: HTMLDivElement;
 	let scene: THREE.Scene;
@@ -227,13 +228,13 @@
 	function animate() {
 		frameId = requestAnimationFrame(animate);
 		
-		if (helixGroup) {
+		if (helixGroup && !paused) {
 			// Subtle multi-axis rotation for a more "floating" feel
 			helixGroup.rotation.y += 0.005;
 			helixGroup.rotation.z += 0.001;
 		}
 
-		if (particleGroup) {
+		if (particleGroup && !paused) {
 			particleGroup.children.forEach(p => {
 				p.position.add(p.userData.velocity);
 				if (Math.abs(p.position.x) > 30) p.position.x *= -1;
@@ -242,7 +243,11 @@
 			});
 		}
 
-		if (controls) controls.update();
+		if (controls) {
+			controls.autoRotate = !paused;
+			controls.update();
+		}
+		
 		if (renderer && scene && camera) renderer.render(scene, camera);
 	}
 
