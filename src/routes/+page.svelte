@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { base } from '$app/paths';
 	// Use relative import or $lib alias for Vite to bundle correctly
 	import init, { generate_dna_sequence, get_base_color } from '$lib/wasm/geneprint_wasm.js';
 	import HelixCanvas from '$lib/components/HelixCanvas.svelte';
@@ -71,7 +72,7 @@
 	<header class="relative z-10 px-10 py-6 flex justify-between items-center border-b border-zinc-800/40 bg-[#0a0b0e]/80 backdrop-blur-md">
 		<div class="flex items-center space-x-5">
 			<div class="w-16 h-16 flex items-center justify-center">
-				<img src="/logo.png" alt="GenePrint Logo" class="w-full h-full object-contain scale-125" />
+				<img src="{base}/logo.png" alt="GenePrint Logo" class="w-full h-full object-contain scale-125" />
 			</div>
 			<h1 class="text-sm font-bold tracking-[0.2em] text-zinc-100 uppercase">
 				Geneprint
